@@ -8,8 +8,9 @@ use 5.008008;
 use strict;
 use warnings;
 use Data::Dumper;
+use Carp;
 
-our $VERSION = '0.1';
+our $VERSION = '0.10';
 
 sub new {
     my $class   = shift;
@@ -25,6 +26,10 @@ sub new {
     # which backend do we use?
     $self->{'backend'} = $options->{'backend'}     if defined $options->{'backend'};
     $self->{'backend'} = $self->_detect_backend() unless defined $self->{'backend'};
+
+    if(!defined $self->{'backend'}) {
+        croak("No backend found, please install one of Net::Traceroute or Net::Traceroute::PurePerl. Or make sure your traceroute binary is in your path.");
+    }
 
     return $self;
 }
@@ -44,7 +49,7 @@ sub _calculate_last_common_hop {
     my $routes = shift;
 
     my @hostnames = keys %{$routes};
-    if(scalar @hostnames <= 1) { die("need at least 2 hosts to calculate similiar routes"); }
+    if(scalar @hostnames <= 1) { croak("need at least 2 hosts to calculate similiar routes"); }
 
     my $last_common_addr = undef;
     for(my $x = 0; $x <= scalar(@{$routes->{$hostnames[0]}}); $x++) {
@@ -86,7 +91,7 @@ sub _get_route_for_host {
         }
     }
     else {
-        die("unknown backend: ".$self->{'backend'});
+        croak("unknown backend: ".$self->{'backend'});
     }
 
     return $routes;

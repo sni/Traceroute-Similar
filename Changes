@@ -1,9 +1,8 @@
 Revision history for Perl extension Traceroute::Similar.
 
-0.1  Sat Oct 31 18:53:03 2009
+0.10  Sat Oct 31 18:53:03 2009
 	- initial working version with tracerroute support
 
 0.01  Sat Oct 31 18:23:46 2009
 	- original version; created by h2xs 1.23 with options
 		-A -X -n Traceroute::Similar
-
