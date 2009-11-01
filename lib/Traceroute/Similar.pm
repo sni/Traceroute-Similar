@@ -7,7 +7,6 @@ package Traceroute::Similar;
 use 5.008008;
 use strict;
 use warnings;
-use Data::Dumper;
 use Carp;
 
 our $VERSION = '0.11';
@@ -58,7 +57,7 @@ sub _calculate_last_common_hop {
     for(my $x = 0; $x <= scalar(@{$routes->{$hostnames[0]}}); $x++) {
         my $current_hop = $routes->{$hostnames[0]}->[$x]->{'addr'};
         for my $host (@hostnames) {
-            if($current_hop ne $routes->{$host}->[$x]->{'addr'}) {
+            if(!defined $routes->{$host}->[$x]->{'addr'} or $current_hop ne $routes->{$host}->[$x]->{'addr'}) {
                 return $last_common_addr;
             }
         }
@@ -122,7 +121,6 @@ sub _get_route_for_host {
     else {
         croak("unknown backend: ".$self->{'backend'});
     }
-    print Dumper($routes);
 
     return $routes;
 }
