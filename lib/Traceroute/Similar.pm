@@ -10,8 +10,9 @@ use warnings;
 use Data::Dumper;
 use Carp;
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
+########################################
 sub new {
     my $class   = shift;
     my $options = shift;
@@ -34,6 +35,7 @@ sub new {
     return $self;
 }
 
+########################################
 sub get_last_common_hop {
     my $self  = shift;
     my $routes;
@@ -44,6 +46,7 @@ sub get_last_common_hop {
     return($self->_calculate_last_common_hop($routes))
 }
 
+########################################
 sub _calculate_last_common_hop {
     my $self   = shift;
     my $routes = shift;
@@ -65,6 +68,7 @@ sub _calculate_last_common_hop {
     return($last_common_addr);
 }
 
+########################################
 sub _get_route_for_host {
     my $self = shift;
     my $host = shift;
@@ -90,13 +94,40 @@ sub _get_route_for_host {
             $routes = $self->_extract_routes_from_traceroute($output);
         }
     }
+    elsif($self->{'backend'} eq 'Net::Traceroute') {
+        my $tr = Net::Traceroute->new(host=> $host);
+        my $hops = $tr->hops;
+        my $last_hop;
+        for(my $x = 0; $x <= $hops; $x++) {
+            my $cur_hop = $tr->hop_query_host($x, 0);
+            if(defined $cur_hop and (!defined $last_hop or $last_hop ne $cur_hop)) {
+                push @{$routes}, { 'addr' => $cur_hop, 'name' => '' };
+                $last_hop = $cur_hop;
+            }
+        }
+    }
+    elsif($self->{'backend'} eq 'Net::Traceroute::PurePerl') {
+        my $tr = new Net::Traceroute::PurePerl( host => $host );
+        $tr->traceroute;
+        my $hops = $tr->hops;
+        my $last_hop;
+        for(my $x = 0; $x <= $hops; $x++) {
+            my $cur_hop = $tr->hop_query_host($x, 0);
+            if(defined $cur_hop and (!defined $last_hop or $last_hop ne $cur_hop)) {
+                push @{$routes}, { 'addr' => $cur_hop, 'name' => '' };
+                $last_hop = $cur_hop;
+            }
+        }
+    }
     else {
         croak("unknown backend: ".$self->{'backend'});
     }
+    print Dumper($routes);
 
     return $routes;
 }
 
+########################################
 sub _extract_routes_from_traceroute {
     my $self   = shift;
     my $output = shift;
@@ -111,6 +142,7 @@ sub _extract_routes_from_traceroute {
     return(\@routes);
 }
 
+########################################
 sub _detect_backend {
     my $self = shift;
 
@@ -138,6 +170,8 @@ sub _detect_backend {
     }
 }
 
+########################################
+
 1;
 __END__
 
@@ -155,7 +189,7 @@ Traceroute::Similar - Perl extension for looking up common hops
 
 This module calculates the furthest common hop from a list of host. The backend
 will be Net::Traceroute:PurePerl or Net::Traceroute or system
-tracerroute (root or sudo permission required).
+tracerroute (sometimes root or sudo permission required).
 
 
 =head1 AUTHOR
