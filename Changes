@@ -1,5 +1,8 @@
 Revision history for Perl extension Traceroute::Similar.
 
+0.12  Wed Nov  4 09:21:29 2009
+	- fixed some typos in meta data
+
 0.11  Sun Nov  1 17:41:22 2009
 	- implemented Net::Traceroute and Net::Traceroute::PurePerl backends
 

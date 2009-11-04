@@ -1,7 +1,7 @@
 Traceroute-Similar version 0.1
 ===============================
 
-This modulei can be used to determine the last similar hop to a bunch
+This module can be used to determine the last similar hop of a bunch
 of hosts.
 
 INSTALLATION
@@ -17,6 +17,9 @@ DEPENDENCIES
 
 This module has no dependencies, but i can use Net::Traceroute or
 Net::Traceroute::PurePerl as backend.
+
+AUTHOR
+    Sven Nierlein <nierlein@cpan.org>
 
 COPYRIGHT AND LICENCE
 
