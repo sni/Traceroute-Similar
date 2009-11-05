@@ -1,5 +1,5 @@
 Changes
-get_last_common_hop.pl
+examples/get_last_common_hop.pl
 lib/Traceroute/Similar.pm
 Makefile.PL
 MANIFEST

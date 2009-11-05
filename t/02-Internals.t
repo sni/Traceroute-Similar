@@ -4,7 +4,7 @@
 
 use strict;
 use Sys::Hostname;
-use Test::More tests => 4;
+use Test::More tests => 5;
 BEGIN {
     use_ok('Traceroute::Similar')
 };
@@ -44,6 +44,15 @@ my $example_routes = {
 my $ts = Traceroute::Similar->new({ verbose => 0 });
 my $last_common_hop2 = $ts->_calculate_last_common_hop($example_routes);
 is($last_common_hop2, '194.59.190.61', 'Example 2');
+my $expected_hops = [
+                    '192.168.123.1',
+                    '82.135.16.21',
+                    '212.18.6.201',
+                    '212.18.7.62',
+                    '194.59.190.61',
+                    ];
+my $common_hops = $ts->_calculate_common_hops($example_routes);
+is_deeply($common_hops, $expected_hops, 'Example 3');
 
 #########################
 # Test Output from OSX traceroute

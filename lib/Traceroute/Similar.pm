@@ -4,12 +4,44 @@
 
 package Traceroute::Similar;
 
-use 5.008008;
+use 5.008000;
 use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '0.12';
+our $VERSION = '0.13';
+
+
+=head1 NAME
+
+Traceroute::Similar - calculate common route for a bunch of hosts
+
+=head1 SYNOPSIS
+
+  use Traceroute::Similar;
+  my $ts = Traceroute::Similar->new();
+  print $ts->get_last_common_hop('host1.com', 'host2.org');
+
+=head1 DESCRIPTION
+
+This module calculates the furthest common hop from a list of host. The backend
+will be Net::Traceroute:PurePerl or Net::Traceroute or system
+tracerroute (which may require root or sudo permissions).
+
+=head1 CONSTRUCTOR
+
+=over 4
+
+=item new ( [ARGS] )
+
+Creates an C<Traceroute::Similar> object. All arguments are optional.
+
+    backend                   path to the unix socket of check_mk livestatus
+    verbose                   verbose mode
+
+=back
+
+=cut
 
 ########################################
 sub new {
@@ -34,7 +66,19 @@ sub new {
     return $self;
 }
 
+
 ########################################
+
+=head1 METHODS
+
+=over 4
+
+=item get_last_common_hop ( host 1, host 2, [ host x...] )
+
+return the last hop which is part of all given hosts
+
+=cut
+
 sub get_last_common_hop {
     my $self  = shift;
     my $routes;
@@ -46,9 +90,44 @@ sub get_last_common_hop {
 }
 
 ########################################
+
+=over 4
+
+=item get_common_hops ( host 1, host 2, [ host x...] )
+
+return an array ref of the common hops from this list of hosts
+
+=cut
+
+sub get_common_hops {
+    my $self  = shift;
+    my $routes;
+    while(my $host = shift) {
+        $routes->{$host} = $self->_get_route_for_host($host);
+    }
+
+    return($self->_calculate_common_hops($routes))
+}
+
+########################################
 sub _calculate_last_common_hop {
     my $self   = shift;
     my $routes = shift;
+    my $last_common_addr;
+    my $common = $self->_calculate_common_hops($routes);
+
+    if(defined $common and scalar @{$common} >= 1) {
+        $last_common_addr = pop @{$common};
+    }
+
+    return($last_common_addr);
+}
+
+########################################
+sub _calculate_common_hops {
+    my $self   = shift;
+    my $routes = shift;
+    my $common;
 
     my @hostnames = keys %{$routes};
     if(scalar @hostnames <= 1) { croak("need at least 2 hosts to calculate similiar routes"); }
@@ -58,13 +137,14 @@ sub _calculate_last_common_hop {
         my $current_hop = $routes->{$hostnames[0]}->[$x]->{'addr'};
         for my $host (@hostnames) {
             if(!defined $routes->{$host}->[$x]->{'addr'} or $current_hop ne $routes->{$host}->[$x]->{'addr'}) {
-                return $last_common_addr;
+                return $common;
             }
         }
         $last_common_addr = $current_hop;
+        push @{$common}, $last_common_addr;
     }
 
-    return($last_common_addr);
+    return($common);
 }
 
 ########################################
@@ -161,8 +241,8 @@ sub _detect_backend {
     };
 
     # try to use traceroute
-    my $traceroute_bin = qx{which traceroute};
-    if(defined $traceroute_bin) {
+    chomp(my $traceroute_bin = qx{which traceroute});
+    if(defined $traceroute_bin and $traceroute_bin ne '' and -x $traceroute_bin) {
         print "DEBUG: found traceroute in path: $traceroute_bin\n" if $self->{'verbose'};
         return('traceroute');
     }
@@ -171,36 +251,18 @@ sub _detect_backend {
 ########################################
 
 1;
-__END__
-
-=head1 NAME
-
-Traceroute::Similar - Perl extension for looking up common hops
-
-=head1 SYNOPSIS
-
-  use Traceroute::Similar;
-  my $ts = Traceroute::Similar->new();
-  print $ts->get_last_common_hop('host1.com', 'host2.org');
-
-=head1 DESCRIPTION
-
-This module calculates the furthest common hop from a list of host. The backend
-will be Net::Traceroute:PurePerl or Net::Traceroute or system
-tracerroute (sometimes root or sudo permission required).
-
 
 =head1 AUTHOR
 
-Sven Nierlein, E<lt>sven@nierlein.deE<gt>
+Sven Nierlein, E<lt>nierlein@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
 Copyright (C) 2009 by Sven Nierlein
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.8.9 or,
-at your option, any later version of Perl 5 you may have available.
-
+it under the same terms as Perl itself.
 
 =cut
+
+__END__

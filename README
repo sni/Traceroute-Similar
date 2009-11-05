@@ -1,4 +1,4 @@
-Traceroute-Similar version 0.1
+Traceroute-Similar version 0.13
 ===============================
 
 This module can be used to determine the last similar hop of a bunch
@@ -30,5 +30,3 @@ Copyright (C) 2009 by Sven Nierlein
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.9 or,
 at your option, any later version of Perl 5 you may have available.
-
-
