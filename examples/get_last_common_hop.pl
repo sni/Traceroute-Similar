@@ -105,7 +105,7 @@ alarm($timeout);
 print "DEBUG: set timeout to $timeout\n" if $verbose;
 
 #########################################################################
-my $ts = Traceroute::Similar->new({ verbose => $verbose });
+my $ts = Traceroute::Similar->new( verbose => $verbose );
 my $last_common_hop = $ts->get_last_common_hop(@{$opt_hosts});
 if(defined $last_common_hop) {
     print $last_common_hop."\n";

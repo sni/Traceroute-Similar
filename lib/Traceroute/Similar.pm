@@ -11,7 +11,6 @@ use Carp;
 
 our $VERSION = '0.13';
 
-
 =head1 NAME
 
 Traceroute::Similar - calculate common route for a bunch of hosts
@@ -45,22 +44,21 @@ Creates an C<Traceroute::Similar> object. All arguments are optional.
 
 ########################################
 sub new {
-    my $class   = shift;
-    my $options = shift;
+    my($class,%options) = @_;
     my $self = {
                     "verbose"   => 0,
                     "backend"   => undef,
                };
     bless $self, $class;
 
-    $self->{'verbose'} = $options->{'verbose'} if defined $options->{'verbose'};
+    $self->{'verbose'} = $options{'verbose'} if defined $options{'verbose'};
 
     # which backend do we use?
-    $self->{'backend'} = $options->{'backend'}     if defined $options->{'backend'};
+    $self->{'backend'} = $options{'backend'}         if defined $options{'backend'};
     $self->{'backend'} = $self->_detect_backend() unless defined $self->{'backend'};
 
     if(!defined $self->{'backend'}) {
-        croak("No backend found, please install one of Net::Traceroute or Net::Traceroute::PurePerl. Or make sure your traceroute binary is in your path.");
+        carp("No backend found, please install one of Net::Traceroute or Net::Traceroute::PurePerl. Or make sure your traceroute binary is in your path.");
     }
 
     return $self;
@@ -70,6 +68,17 @@ sub new {
 ########################################
 
 =head1 METHODS
+
+=item get_backend ( )
+
+returns the used backend or undef if none found
+
+=cut
+
+sub get_backend {
+    my $self  = shift;
+    return($self->{'backend'});
+}
 
 =over 4
 
@@ -81,6 +90,7 @@ return the last hop which is part of all given hosts
 
 sub get_last_common_hop {
     my $self  = shift;
+    return if !defined $self->{'backend'};
     my $routes;
     while(my $host = shift) {
         $routes->{$host} = $self->_get_route_for_host($host);
@@ -101,6 +111,7 @@ return an array ref of the common hops from this list of hosts
 
 sub get_common_hops {
     my $self  = shift;
+    return if !defined $self->{'backend'};
     my $routes;
     while(my $host = shift) {
         $routes->{$host} = $self->_get_route_for_host($host);
@@ -199,7 +210,7 @@ sub _get_route_for_host {
         }
     }
     else {
-        croak("unknown backend: ".$self->{'backend'});
+        carp("unknown backend: ".$self->{'backend'});
     }
 
     return $routes;
@@ -246,6 +257,8 @@ sub _detect_backend {
         print "DEBUG: found traceroute in path: $traceroute_bin\n" if $self->{'verbose'};
         return('traceroute');
     }
+
+    return;
 }
 
 ########################################

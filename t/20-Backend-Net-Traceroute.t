@@ -5,17 +5,20 @@
 use Test::More;
 
 BEGIN {
-  eval {require Net::Traceroute;};
+  eval {
+    require Net::Traceroute;
+    my $tr = Net::Traceroute->new(host=> "localhost");
+  };
 
   if ( $@ ) {
-    plan skip_all => 'Net::Traceroute not installed'
+    plan skip_all => 'Net::Traceroute not installed or not working: '.$@
   }else{
     plan tests => 2
   }
 }
 
 use_ok("Traceroute::Similar");
-my $ts = Traceroute::Similar->new({'backend' => 'Net::Traceroute'});
+my $ts = Traceroute::Similar->new('backend' => 'Net::Traceroute');
 
 my $expected_routes = [ { 'name' => '', 'addr' => '127.0.0.1' } ];
 my $local_route = $ts->_get_route_for_host('localhost');

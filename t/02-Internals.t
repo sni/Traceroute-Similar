@@ -41,7 +41,7 @@ my $example_routes = {
                            { 'name' => 'gv-in-f104.1e100.net',           'addr' => '216.239.59.104' }
                          ]
 };
-my $ts = Traceroute::Similar->new({ verbose => 0 });
+my $ts = Traceroute::Similar->new( verbose => 0 );
 my $last_common_hop2 = $ts->_calculate_last_common_hop($example_routes);
 is($last_common_hop2, '194.59.190.61', 'Example 2');
 my $expected_hops = [
