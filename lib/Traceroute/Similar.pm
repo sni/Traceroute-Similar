@@ -69,6 +69,8 @@ sub new {
 
 =head1 METHODS
 
+=over 4
+
 =item get_backend ( )
 
 returns the used backend or undef if none found
@@ -79,8 +81,6 @@ sub get_backend {
     my $self  = shift;
     return($self->{'backend'});
 }
-
-=over 4
 
 =item get_last_common_hop ( host 1, host 2, [ host x...] )
 
@@ -99,9 +99,8 @@ sub get_last_common_hop {
     return($self->_calculate_last_common_hop($routes))
 }
 
-########################################
 
-=over 4
+########################################
 
 =item get_common_hops ( host 1, host 2, [ host x...] )
 
@@ -120,6 +119,9 @@ sub get_common_hops {
     return($self->_calculate_common_hops($routes))
 }
 
+
+########################################
+# internal subs
 ########################################
 sub _calculate_last_common_hop {
     my $self   = shift;
