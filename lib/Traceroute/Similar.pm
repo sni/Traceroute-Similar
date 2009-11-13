@@ -4,7 +4,7 @@
 
 package Traceroute::Similar;
 
-use 5.008000;
+use 5.000000;
 use strict;
 use warnings;
 use Carp;
