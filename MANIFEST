@@ -9,4 +9,6 @@ t/02-Internals.t
 t/20-Backend-Net-Traceroute.t
 t/21-Backend-Net-Traceroute-PurePerl.t
 t/22-Backend-Traceroute.t
+t/98-Pod-Coverage.t
 t/99-Perl-Critic.t
+t/perlcriticrc

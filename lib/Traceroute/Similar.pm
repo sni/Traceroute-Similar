@@ -142,6 +142,8 @@ sub _calculate_common_hops {
     my $routes = shift;
     my $common;
 
+    return if !defined $routes;
+
     my @hostnames = keys %{$routes};
     if(scalar @hostnames <= 1) { croak("need at least 2 hosts to calculate similiar routes"); }
 
@@ -224,8 +226,8 @@ sub _extract_routes_from_traceroute {
     my $output = shift;
     my @routes;
 
-    for my $line (split /\n/, $output) {
-        if($line =~ m/(\d+)\s+(.*?)\s+\((\d+\.\d+\.\d+\.\d+)\)/) {
+    for my $line (split /\n/xm, $output) {
+        if($line =~ m/(\d+)\s+(.*?)\s+\((\d+\.\d+\.\d+\.\d+)\)/xm) {
             push @routes, { 'addr' => $3, 'name' => $2 };
         }
     }
