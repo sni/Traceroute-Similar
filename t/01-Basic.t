@@ -17,5 +17,9 @@ isa_ok( $ts, 'Traceroute::Similar' );
 SKIP: {
     skip 'no backend found', 1,if(!defined $ts->get_backend());
     my $last_common_hop1 = $ts->get_last_common_hop('localhost', hostname);
-    is($last_common_hop1, undef, 'Example 1');
+    if(defined $last_common_hop1) {
+        is($last_common_hop1, "127.0.0.1", 'Example 1');
+    } else {
+        is($last_common_hop1, undef, 'Example 1');
+    }
 }
