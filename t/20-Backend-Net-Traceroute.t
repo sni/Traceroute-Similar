@@ -11,7 +11,7 @@ BEGIN {
   };
 
   if ( $@ ) {
-    plan skip_all => 'Net::Traceroute not installed or not working: '.$@
+    plan skip_all => 'Net::Traceroute not installed'
   }else{
     plan tests => 2
   }
@@ -27,3 +27,4 @@ SKIP: {
     my $local_route = $ts->_get_route_for_host('localhost');
     is_deeply($expected_routes, $local_route, 'route for localhost');
 }
+

@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = '0.15_1';
+our $VERSION = '0.16';
 
 =head1 NAME
 
@@ -164,9 +164,9 @@ sub _calculate_common_hops {
 
 ########################################
 sub _get_route_for_host {
-    my $self = shift;
-    my $host = shift;
-    my $routes;
+    my $self   = shift;
+    my $host   = shift;
+    my $routes = [];
 
     print "DEBUG: _get_route_for_host('".$host."')\n" if $self->{'verbose'};
 
