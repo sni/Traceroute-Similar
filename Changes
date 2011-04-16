@@ -1,5 +1,12 @@
 Revision history for Perl extension Traceroute::Similar.
 
+0.18  Sat Apr 16 17:48:44 CEST 2011
+	- fixed problem with tests and use english
+
+0.16  Thu Nov 04 18:34:52 CET 2010
+	- fixed tests on midnight bsd
+	- fixed tests with uncommon network config
+
 0.15  Sat Feb 20 20:44:15 CET 2010
 	- fixed tests with uncommon network configurations
 
